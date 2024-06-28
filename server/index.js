@@ -3,12 +3,27 @@ const dotenv = require("dotenv");
 const request = require("request");
 const { URLSearchParams } = require("url");
 
-const port = 5000;
+const port = 3001;
+
+global.access_token = "";
 
 dotenv.config();
 
 var spotify_client_id = process.env.spotify_client_id;
 var spotify_client_secret = process.env.spotify_client_secret;
+
+var spotify_redirect_uri = "https://localhost:3000/auth/callback";
+
+var generateRandomString = function (length) {
+  var text = "";
+  var possible =
+    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+
+  for (var i = 0; i < length; i++) {
+    text += possible.charAt(Math.floor(Math.random() * possible.length));
+  }
+  return text;
+};
 
 var app = express();
 
@@ -24,7 +39,7 @@ app.get("/auth/login", (req, res) => {
     state: state,
   });
 
-  res_redirect(
+  res.redirect(
     "https://accounts.spotify.com/authorize/?" +
       auth_query_parameters.toString()
   );
@@ -37,7 +52,7 @@ app.get("/auth/callback", (req, res) => {
     url: "https://accounts.spotify.com/api/token",
     form: {
       code: code,
-      redirect_uri: "http://localhost:3000/auth/callback",
+      redirect_uri: "http://localhost:3000/post-login?token=${token}",
       grant_type: "authorization_code",
     },
     headers: {
