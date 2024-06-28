@@ -10,7 +10,7 @@ global.access_token = "";
 dotenv.config();
 
 var spotify_client_id = "33984d71b68e4231b7db8088bd75ff17";
-var spotify_client_secret = process.env.spotify_client_secret;
+var spotify_client_secret = "ab56577e6e34483fb27804f8e4cacc6f";
 
 var spotify_redirect_uri = "http://localhost:3001/auth/callback";
 
@@ -77,7 +77,7 @@ app.get("/auth/callback", (req, res) => {
     }
 
     var access_token = body.access_token;
-    res.redirect("/");
+    res.redirect("http://localhost:3000/post-login?token=${token}");
   });
 });
 
