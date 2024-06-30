@@ -76,7 +76,6 @@ app.get("/auth/callback", (req, res) => {
       return res.status(response.statusCode).json(body);
     }
 
-    var access_token = body.access_token;
     res.redirect("http://localhost:3000/post-login?token=${token}");
   });
 });
