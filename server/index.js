@@ -10,8 +10,6 @@ global.access_token = "";
 
 dotenv.config();
 
-// app.use(cors());
-
 var spotify_client_id = "33984d71b68e4231b7db8088bd75ff17";
 var spotify_client_secret = "ab56577e6e34483fb27804f8e4cacc6f";
 
@@ -29,6 +27,8 @@ var generateRandomString = function (length) {
 };
 
 var app = express();
+app.use(cors());
+app.options("*", cors());
 
 app.get("/auth/login", (req, res) => {
   var scope = "streaming user-read-email user-read-private";
@@ -70,6 +70,11 @@ app.get("/auth/callback", (req, res) => {
   };
 
   request.post(authOptions, function (error, response, body) {
+    // if (!error && response.statusCode === 200) {
+
+    //   res.redirect("/");
+    // }
+    access_token = body.access_token;
     if (error) {
       console.error("Error:", error);
       return res.status(500).json({ error: "Internal Server Error" });
