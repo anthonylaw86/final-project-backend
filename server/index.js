@@ -2,12 +2,15 @@ const express = require("express");
 const dotenv = require("dotenv");
 const request = require("request");
 const { URLSearchParams } = require("url");
+const cors = require("cors");
 
 const port = 3001;
 
 global.access_token = "";
 
 dotenv.config();
+
+// app.use(cors());
 
 var spotify_client_id = "33984d71b68e4231b7db8088bd75ff17";
 var spotify_client_secret = "ab56577e6e34483fb27804f8e4cacc6f";
