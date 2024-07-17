@@ -5,7 +5,7 @@ const { ForbiddenError } = require("../utils/Errors/forbiddenError");
 
 // CREATE MUSIC CARD
 
-const createCard = (req, res, next) => {
+const createMusicCard = (req, res, next) => {
   const { name, artist, albumUrl } = req.body;
 
   MusicCard.create({ name, artist, albumUrl, owner: req.user._id })
@@ -25,7 +25,7 @@ const createCard = (req, res, next) => {
 
 // GET MUSIC CARD
 
-const getCard = (req, res, next) => {
+const getMusicCard = (req, res, next) => {
   MusicCard.find({})
     .then((items) => res.status(200).send(items))
     .catch((err) => {
@@ -36,7 +36,7 @@ const getCard = (req, res, next) => {
 
 // DELETE MUSIC CARD
 
-const deleteCard = (req, res, next) => {
+const deleteMusicCard = (req, res, next) => {
   const { itemId } = req.params;
 
   console.log(itemId);
@@ -65,4 +65,66 @@ const deleteCard = (req, res, next) => {
       }
       next(err);
     });
+};
+
+// LIKE MUSIC CARD
+
+const likeMusicCard = (req, res, next) => {
+  const userId = req.user._id;
+  const { itemId } = req.params;
+
+  MusicCard.findByIdAndUpdate(
+    itemId,
+    { $addToSet: { likes: userId } },
+    { new: true }
+  )
+    .ofFail()
+    .then((item) => {
+      res.status(200).send({ data: item });
+    })
+    .catch((err) => {
+      console.error(err);
+      if (err.name === "DocumentNotFoundError") {
+        next(new NotFoundError("Item not found"));
+      }
+      if (err.name === "CastError") {
+        next(new BadRequestError("Invalid item ID"));
+      }
+      next(err);
+    });
+};
+
+// UNLIKE MUSIC CARD
+
+const unlikeMusicCard = (req, res, next) => {
+  const userId = req.user._id;
+  const { itemId } = req.params;
+
+  MusicCard.findByIdAndUpdate(
+    itemId,
+    { $pull: { likes: userId } },
+    { new: true }
+  )
+    .ofFail()
+    .then((item) => {
+      res.status(200).send({ data: item });
+    })
+    .catch((err) => {
+      console.error(err);
+      if (err.name === "DocumentNotFoundError") {
+        next(new NotFoundError("Item not found"));
+      }
+      if (err.name === "CastError") {
+        next(new BadRequestError("Invalid Data"));
+      }
+      next(err);
+    });
+};
+
+Module.exports = {
+  createMusicCard,
+  getMusicCard,
+  deleteMusicCard,
+  likeMusicCard,
+  unlikeMusicCard,
 };
