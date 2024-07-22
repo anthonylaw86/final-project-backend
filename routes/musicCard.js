@@ -12,7 +12,7 @@ const {
 const {
   validateMusicCard,
   validateItemId,
-} = require("../middleware/validation");
+} = require("../middleware/validation.js");
 
 router.get("/", getMusicCard);
 
