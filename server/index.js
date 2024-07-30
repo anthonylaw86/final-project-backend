@@ -1,10 +1,14 @@
+require("dotenv").config();
 const express = require("express");
 const dotenv = require("dotenv");
 const request = require("request");
 const { URLSearchParams } = require("url");
 const cors = require("cors");
+const mongoose = require("mongoose");
+const { errors } = require("celebrate");
+const helmet = require("helmet");
 
-const port = 3001;
+const port = 3002;
 
 global.access_token = "";
 

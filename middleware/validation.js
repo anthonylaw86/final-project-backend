@@ -45,6 +45,18 @@ const validateUserInfo = celebrate({
   }),
 });
 
+const validateUserLogin = celebrate({
+  username: Joi.string().required().min(2).max(30).messages({
+    "string.min": 'The minimum length of the "username" field is 2',
+    "string.max": 'The maximum length of the "username" field is 30',
+    "string.empty": 'The "username" field must be filled in',
+  }),
+  password: Joi.string().required().min(8).message({
+    "string.empty": 'The "password" field must be filled in',
+    "string.min": 'The minimum length of the "password" field is 8',
+  }),
+})
+
 const validateItemId = celebrate({
   params: Joi.object().keys({
     itemId: Joi.string().required().hex().min(24).messages({
@@ -59,4 +71,5 @@ module.exports = {
   validateMusicCard,
   validateUserInfo,
   validateItemId,
+  validateUserLogin
 };
