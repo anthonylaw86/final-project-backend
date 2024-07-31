@@ -121,7 +121,7 @@ const unlikeMusicCard = (req, res, next) => {
     });
 };
 
-Module.exports = {
+module.exports = {
   createMusicCard,
   getMusicCard,
   deleteMusicCard,

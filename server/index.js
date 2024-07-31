@@ -133,42 +133,42 @@ app.get("/auth/callback", (req, res) => {
 
   //   res.redirect("http://localhost:3000/post-login?token=${token}");
   // });
+});
 
-  app.post("/profile", async (req, res) => {
-    const authOptions = {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/x-www-form-urlencoded",
-        Authorization:
-          "Basic " +
-          new Buffer(client_id + ":" + client_secret).toString("base64"),
-      },
-      body: new URLSearchParams({
-        grant_type: "authorization_code",
-        code: req.body.code,
-        redirect_uri: redirect_uri,
-      }),
-    };
+app.post("/profile", async (req, res) => {
+  const authOptions = {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/x-www-form-urlencoded",
+      Authorization:
+        "Basic " +
+        new Buffer(client_id + ":" + client_secret).toString("base64"),
+    },
+    body: new URLSearchParams({
+      grant_type: "authorization_code",
+      code: req.body.code,
+      redirect_uri: redirect_uri,
+    }),
+  };
 
-    try {
-      const response = await fetch(
-        "https://accounts.spotify.com/api/token",
-        authOptions
-      );
-      const body = await response.json();
+  try {
+    const response = await fetch(
+      "https://accounts.spotify.com/api/token",
+      authOptions
+    );
+    const body = await response.json();
 
-      if (!response.ok) {
-        console.error("Failed to retrieve access token:", body);
-        return res.status(response.status).json(body);
-      }
-
-      const access_token = body.access_token;
-      res.redirect(`http://localhost:3000/post-login?token=${access_token}`);
-    } catch (error) {
-      console.error("Error:", error);
-      res.status(500).json({ error: "Internal Server Error" });
+    if (!response.ok) {
+      console.error("Failed to retrieve access token:", body);
+      return res.status(response.status).json(body);
     }
-  });
+
+    const access_token = body.access_token;
+    res.redirect(`http://localhost:3000/post-login?token=${access_token}`);
+  } catch (error) {
+    console.error("Error:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
 });
 
 app.get("/auth/token", (req, res) => {
