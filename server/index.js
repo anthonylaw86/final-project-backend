@@ -39,17 +39,9 @@ app.use((req, res, next) => {
 // REQUEST LOGGER
 app.use(requestLogger);
 
-// ROUTES
-app.use("/", indexRouter);
-
-// ERROR LOGGER
-app.use(errorLogger);
-
-// CELEBRATE ERROR HANDLER
-app.use(errors());
-
-// CENTRALIZED ERROR HANDLER
-app.use(errorHandler);
+app.get("/auth/token", (req, res) => {
+  res.json({ access_token: access_token });
+});
 
 // SPOTIFY
 
@@ -173,9 +165,17 @@ app.post("/profile", async (req, res) => {
   }
 });
 
-app.get("/auth/token", (req, res) => {
-  res.json({ access_token: access_token });
-});
+// ROUTES
+app.use("/", indexRouter);
+
+// ERROR LOGGER
+app.use(errorLogger);
+
+// CELEBRATE ERROR HANDLER
+app.use(errors());
+
+// CENTRALIZED ERROR HANDLER
+app.use(errorHandler);
 
 app.listen(port, () => {
   console.log(`Listening at http://localhost:${port}`);
