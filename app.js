@@ -8,11 +8,11 @@ const cors = require("cors");
 const mongoose = require("mongoose");
 const { errors } = require("celebrate");
 const helmet = require("helmet");
-const indexRouter = require("../routes/index");
-const errorHandler = require("../middleware/errorHandler");
-const limiter = require("../middleware/rateLimiter");
+const indexRouter = require("./routes/index");
+const errorHandler = require("./middleware/errorHandler");
+const limiter = require("./middleware/rateLimiter");
 
-const { requestLogger, errorLogger } = require("../middleware/logger");
+const { requestLogger, errorLogger } = require("./middleware/logger");
 
 const app = express();
 const { port = 3002 } = process.env;
@@ -38,10 +38,6 @@ app.use((req, res, next) => {
 
 // REQUEST LOGGER
 app.use(requestLogger);
-
-app.get("/auth/token", (req, res) => {
-  res.json({ access_token: access_token });
-});
 
 // SPOTIFY
 
@@ -85,6 +81,11 @@ app.get("/auth/login", (req, res) => {
     "https://accounts.spotify.com/authorize/?" +
       auth_query_parameters.toString()
   );
+});
+
+app.get("/auth/token", (req, res) => {
+  res.json({ access_token: access_token });
+  console.log(access_token);
 });
 
 app.get("/auth/callback", (req, res) => {
