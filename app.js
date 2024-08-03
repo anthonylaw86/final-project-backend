@@ -65,6 +65,11 @@ app.use(cors());
 app.use(express.json());
 app.options("*", cors());
 
+app.get("/auth/token", (req, res) => {
+  res.json({ access_token: access_token });
+  console.log(access_token);
+});
+
 app.get("/auth/login", (req, res) => {
   var scope = "streaming user-read-email user-read-private";
   var state = generateRandomString(16);
@@ -83,50 +88,89 @@ app.get("/auth/login", (req, res) => {
   );
 });
 
-app.get("/auth/token", (req, res) => {
-  res.json({ access_token: access_token });
-  console.log(access_token);
-});
+// app.get("/auth/callback", (req, res) => {
+//   var code = req.query.code;
 
-app.get("/auth/callback", (req, res) => {
-  var code = req.query.code;
+//   var authOptions = {
+//     url: "https://accounts.spotify.com/api/token",
+//     form: {
+//       code: code,
+//       redirect_uri: spotify_redirect_uri,
+//       grant_type: "authorization_code",
+//     },
+//     headers: {
+//       Authorization:
+//         "Basic " +
+//         Buffer.from(spotify_client_id + ":" + spotify_client_secret).toString(
+//           "base64"
+//         ),
+//       "Content-Type": "application/x-www-form-urlencoded",
+//     },
+//     json: true,
+//   };
 
-  var authOptions = {
-    url: "https://accounts.spotify.com/api/token",
-    form: {
-      code: code,
-      redirect_uri: spotify_redirect_uri,
-      grant_type: "authorization_code",
-    },
-    headers: {
-      Authorization:
-        "Basic " +
-        Buffer.from(spotify_client_id + ":" + spotify_client_secret).toString(
-          "base64"
-        ),
-      "Content-Type": "application/x-www-form-urlencoded",
-    },
-    json: true,
+app.get("/auth/callback", async (req, res) => {
+  const code = req.query.code;
+
+  // prepare the request body and headers
+  const body = new URLSearchParams({
+    code: code,
+    redirect_uri: spotify_redirect_uri,
+    grant_type: "authorization_code",
+  });
+
+  const headers = {
+    Authorization:
+      "Basic " +
+      Buffer.from(spotify_client_id + ":" + spotify_client_secret).toString(
+        "base64"
+      ),
+    "Content-Type": "application/x-www-form-urlencoded",
   };
 
-  // request.post(authOptions, function (error, response, body) {
-  //   // if (!error && response.statusCode === 200) {
+  try {
+    // make the POST request to spotify's token endpoint
+    const response = await fetch("https://accounts.spotify.com/api/token", {
+      method: "POST",
+      headers: headers,
+      body: body,
+    });
 
-  //   //   res.redirect("/");
-  //   // }
-  //   access_token = body.access_token;
-  //   if (error) {
-  //     console.error("Error:", error);
-  //     return res.status(500).json({ error: "Internal Server Error" });
-  //   }
-  //   if (response.statusCode !== 200) {
-  //     console.error("Failed to retrieve access token:", body);
-  //     return res.status(response.statusCode).json(body);
-  //   }
+    // check if the response was successful
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
 
-  //   res.redirect("http://localhost:3000/post-login?token=${token}");
-  // });
+    // Parse the JSON response
+    const data = await response.json();
+    const { access_token } = data;
+
+    // do something with the tokens
+    res.json({ access_token });
+  } catch (error) {
+    console.error("Error exchanging code for token:", error);
+    res.status(500).send("Error exchanging code for token");
+  }
 });
+
+// request.post(authOptions, function (error, response, body) {
+//   // if (!error && response.statusCode === 200) {
+
+//   //   res.redirect("/");
+//   // }
+//   access_token = body.access_token;
+//   if (error) {
+//     console.error("Error:", error);
+//     return res.status(500).json({ error: "Internal Server Error" });
+//   }
+//   if (response.statusCode !== 200) {
+//     console.error("Failed to retrieve access token:", body);
+//     return res.status(response.statusCode).json(body);
+//   }
+
+//   res.redirect("http://localhost:3000/post-login?token=${token}");
+// });
+// });
 
 app.post("/profile", async (req, res) => {
   const authOptions = {
