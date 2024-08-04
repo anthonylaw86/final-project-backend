@@ -180,15 +180,15 @@ app.post("/profile", async (req, res) => {
       "Content-Type": "application/x-www-form-urlencoded",
       Authorization:
         "Basic " +
-        new Buffer(spotify_client_id + ":" + spotify_client_secret).toString(
+        Buffer.from(spotify_client_id + ":" + spotify_client_secret).toString(
           "base64"
         ),
     },
-    body: new URLSearchParams({
+    body: {
       grant_type: "authorization_code",
       code: req.body.code,
       redirect_uri: redirect_uri,
-    }),
+    },
   };
 
   try {
