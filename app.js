@@ -2,7 +2,7 @@ require("dotenv").config();
 const express = require("express");
 const dotenv = require("dotenv");
 // const request = require("request");
-const fetch = import("node-fetch");
+const fetch = require("node-fetch");
 const { URLSearchParams } = require("url");
 const cors = require("cors");
 const mongoose = require("mongoose");
