@@ -113,11 +113,11 @@ app.get("/auth/callback", async (req, res) => {
   const code = req.query.code;
 
   // prepare the request body and headers
-  const body = new URLSearchParams({
+  const body = {
     code: code,
     redirect_uri: spotify_redirect_uri,
     grant_type: "authorization_code",
-  });
+  };
 
   const headers = {
     Authorization:

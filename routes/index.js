@@ -12,6 +12,8 @@ const userRouter = require("./user");
 
 router.use("/users", authorization, userRouter);
 
+router.get("/auth/callback");
+
 router.use("/items", musicCardRouter);
 
 router.post("/singin", validateUserLogin, loginUser);
