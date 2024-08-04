@@ -138,6 +138,7 @@ app.get("/auth/callback", async (req, res) => {
 
     // check if the response was successful
     if (!response.ok) {
+      const errorText = await response.text();
       throw new Error(`HTTP error! status: ${response.status}`);
     }
 
