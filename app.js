@@ -45,8 +45,8 @@ global.access_token = "";
 
 dotenv.config();
 
-var spotify_client_id = "33984d71b68e4231b7db8088bd75ff17";
-var spotify_client_secret = "ab56577e6e34483fb27804f8e4cacc6f";
+var spotify_client_id = process.env.SPOTIFY_CLIENT_ID;
+var spotify_client_secret = process.env.SPOTIFY_CLIENT_SECRET;
 
 var spotify_redirect_uri = "http://localhost:3002/auth/callback";
 
@@ -113,11 +113,11 @@ app.get("/auth/callback", async (req, res) => {
   const code = req.query.code;
 
   // prepare the request body and headers
-  const body = {
+  const body = new URLSearchParams({
     code: code,
     redirect_uri: spotify_redirect_uri,
     grant_type: "authorization_code",
-  };
+  }).toString();
 
   const headers = {
     Authorization:
@@ -139,7 +139,7 @@ app.get("/auth/callback", async (req, res) => {
     // check if the response was successful
     if (!response.ok) {
       const errorText = await response.text();
-      throw new Error(`HTTP error! status: ${response.status}`);
+      throw new Error(`HTTP error! status: ${response.status} - ${errorText}`);
     }
 
     // Parse the JSON response
@@ -150,7 +150,7 @@ app.get("/auth/callback", async (req, res) => {
     res.json({ access_token });
   } catch (error) {
     console.error("Error exchanging code for token:", error);
-    res.status(500).send("Error exchanging code for token");
+    res.status(500).json({ error: "Internal Server Error" });
   }
 });
 
@@ -174,21 +174,24 @@ app.get("/auth/callback", async (req, res) => {
 // });
 
 app.post("/profile", async (req, res) => {
+  const { code } = req.body;
+  const redirect_uri = "http://localhost:3002/auth/callback";
+
   const authOptions = {
     method: "POST",
     headers: {
       "Content-Type": "application/x-www-form-urlencoded",
       Authorization:
         "Basic " +
-        Buffer.from(spotify_client_id + ":" + spotify_client_secret).toString(
+        Buffer.from(`${spotify_client_id}:${spotify_client_secret}`).toString(
           "base64"
         ),
     },
-    body: {
+    body: new URLSearchParams({
       grant_type: "authorization_code",
-      code: req.body.code,
+      code: code,
       redirect_uri: redirect_uri,
-    },
+    }),
   };
 
   try {
@@ -203,7 +206,7 @@ app.post("/profile", async (req, res) => {
       return res.status(response.status).json(body);
     }
 
-    const access_token = body.access_token;
+    const { access_token } = body;
     res.redirect(`http://localhost:3000/post-login?token=${access_token}`);
   } catch (error) {
     console.error("Error:", error);
