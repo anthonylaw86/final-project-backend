@@ -10,7 +10,7 @@ router.get("/auth/login", (req, res) => {
     response_type: "code",
     client_id: spotify_client_id,
     scope: scope,
-    redirect_uri: "http://localhost:3001/auth/callback",
+    redirect_uri: "http://localhost:3002/auth/callback",
     state: state,
   });
 

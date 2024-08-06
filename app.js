@@ -173,46 +173,46 @@ app.get("/auth/callback", async (req, res) => {
 // });
 // });
 
-app.post("/profile", async (req, res) => {
-  const { code } = req.body;
-  const redirect_uri = "http://localhost:3002/auth/callback";
+// app.post("/profile", async (req, res) => {
+//   const { code } = req.body;
+//   const redirect_uri = "http://localhost:3002/auth/callback";
 
-  const authOptions = {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/x-www-form-urlencoded",
-      Authorization:
-        "Basic " +
-        Buffer.from(`${spotify_client_id}:${spotify_client_secret}`).toString(
-          "base64"
-        ),
-    },
-    body: new URLSearchParams({
-      grant_type: "authorization_code",
-      code: code,
-      redirect_uri: redirect_uri,
-    }),
-  };
+//   const authOptions = {
+//     method: "POST",
+//     headers: {
+//       "Content-Type": "application/x-www-form-urlencoded",
+//       Authorization:
+//         "Basic " +
+//         Buffer.from(`${spotify_client_id}:${spotify_client_secret}`).toString(
+//           "base64"
+//         ),
+//     },
+//     body: new URLSearchParams({
+//       grant_type: "authorization_code",
+//       code: code,
+//       redirect_uri: redirect_uri,
+//     }),
+//   };
 
-  try {
-    const response = await fetch(
-      "https://accounts.spotify.com/api/token",
-      authOptions
-    );
-    const body = await response.json();
+//   try {
+//     const response = await fetch(
+//       "https://accounts.spotify.com/api/token",
+//       authOptions
+//     );
+//     const body = await response.json();
 
-    if (!response.ok) {
-      console.error("Failed to retrieve access token:", body);
-      return res.status(response.status).json(body);
-    }
+//     if (!response.ok) {
+//       console.error("Failed to retrieve access token:", body);
+//       return res.status(response.status).json(body);
+//     }
 
-    const { access_token } = body;
-    res.redirect(`http://localhost:3000/post-login?token=${access_token}`);
-  } catch (error) {
-    console.error("Error:", error);
-    res.status(500).json({ error: "Internal Server Error" });
-  }
-});
+//     const { access_token } = body;
+//     res.redirect(`http://localhost:3000/post-login?token=${access_token}`);
+//   } catch (error) {
+//     console.error("Error:", error);
+//     res.status(500).json({ error: "Internal Server Error" });
+//   }
+// });
 
 // ROUTES
 app.use("/", indexRouter);
