@@ -1,7 +1,6 @@
 require("dotenv").config();
 const express = require("express");
 const dotenv = require("dotenv");
-// const request = require("request");
 const fetch = require("node-fetch");
 const { URLSearchParams } = require("url");
 const cors = require("cors");
@@ -88,27 +87,6 @@ app.get("/auth/login", (req, res) => {
   );
 });
 
-// app.get("/auth/callback", (req, res) => {
-//   var code = req.query.code;
-
-//   var authOptions = {
-//     url: "https://accounts.spotify.com/api/token",
-//     form: {
-//       code: code,
-//       redirect_uri: spotify_redirect_uri,
-//       grant_type: "authorization_code",
-//     },
-//     headers: {
-//       Authorization:
-//         "Basic " +
-//         Buffer.from(spotify_client_id + ":" + spotify_client_secret).toString(
-//           "base64"
-//         ),
-//       "Content-Type": "application/x-www-form-urlencoded",
-//     },
-//     json: true,
-//   };
-
 app.get("/auth/callback", async (req, res) => {
   const code = req.query.code;
 
@@ -147,72 +125,12 @@ app.get("/auth/callback", async (req, res) => {
     const { access_token } = data;
 
     // do something with the tokens
-    res.json({ access_token });
+    res.redirect(`http://localhost:3000/post-login?token=${access_token}`);
   } catch (error) {
     console.error("Error exchanging code for token:", error);
     res.status(500).json({ error: "Internal Server Error" });
   }
 });
-
-// request.post(authOptions, function (error, response, body) {
-//   // if (!error && response.statusCode === 200) {
-
-//   //   res.redirect("/");
-//   // }
-//   access_token = body.access_token;
-//   if (error) {
-//     console.error("Error:", error);
-//     return res.status(500).json({ error: "Internal Server Error" });
-//   }
-//   if (response.statusCode !== 200) {
-//     console.error("Failed to retrieve access token:", body);
-//     return res.status(response.statusCode).json(body);
-//   }
-
-//   res.redirect("http://localhost:3000/post-login?token=${token}");
-// });
-// });
-
-// app.post("/profile", async (req, res) => {
-//   const { code } = req.body;
-//   const redirect_uri = "http://localhost:3002/auth/callback";
-
-//   const authOptions = {
-//     method: "POST",
-//     headers: {
-//       "Content-Type": "application/x-www-form-urlencoded",
-//       Authorization:
-//         "Basic " +
-//         Buffer.from(`${spotify_client_id}:${spotify_client_secret}`).toString(
-//           "base64"
-//         ),
-//     },
-//     body: new URLSearchParams({
-//       grant_type: "authorization_code",
-//       code: code,
-//       redirect_uri: redirect_uri,
-//     }),
-//   };
-
-//   try {
-//     const response = await fetch(
-//       "https://accounts.spotify.com/api/token",
-//       authOptions
-//     );
-//     const body = await response.json();
-
-//     if (!response.ok) {
-//       console.error("Failed to retrieve access token:", body);
-//       return res.status(response.status).json(body);
-//     }
-
-//     const { access_token } = body;
-//     res.redirect(`http://localhost:3000/post-login?token=${access_token}`);
-//   } catch (error) {
-//     console.error("Error:", error);
-//     res.status(500).json({ error: "Internal Server Error" });
-//   }
-// });
 
 // ROUTES
 app.use("/", indexRouter);
