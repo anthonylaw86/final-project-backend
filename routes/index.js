@@ -1,4 +1,7 @@
-const router = require("express").Router();
+const express = require('express')
+const router = express.Router()
+
+// const router = require("express").Router();
 const { createUser, loginUser } = require("../controllers/users");
 const { authorization } = require("../middleware/auth");
 const {
@@ -11,8 +14,6 @@ const musicCardRouter = require("./musicCard");
 const userRouter = require("./user");
 
 router.use("/users", authorization, userRouter);
-
-// router.get("/auth/callback");
 
 router.use("/items", musicCardRouter);
 

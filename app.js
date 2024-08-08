@@ -7,7 +7,7 @@ const cors = require("cors");
 const mongoose = require("mongoose");
 const { errors } = require("celebrate");
 const helmet = require("helmet");
-const indexRouter = require("./routes/index");
+const routes = require("./routes/index");
 const errorHandler = require("./middleware/errorHandler");
 const limiter = require("./middleware/rateLimiter");
 
@@ -133,7 +133,7 @@ app.get("/auth/callback", async (req, res) => {
 });
 
 // ROUTES
-app.use("/", indexRouter);
+app.use("/", routes);
 
 // ERROR LOGGER
 app.use(errorLogger);
