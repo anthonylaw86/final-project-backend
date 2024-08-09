@@ -71,13 +71,13 @@ const getCurrentUser = (req, res, next) => {
 // USER LOGIN
 
 const loginUser = (req, res, next) => {
-  const { email, password } = req.body;
+  const { username, password } = req.body;
 
-  if (!email || !password) {
-    next(new BadRequestError("Email & Password are required"));
+  if (!username || !password) {
+    next(new BadRequestError("Username & Password are required"));
   }
 
-  return User.findUserByCredentials(email, password)
+  return User.findUserByCredentials(username, password)
     .then((user) => {
       const token = jwt.sign({ _id: user._id }, JWT_SECRET, {
         expiresIn: "30d",

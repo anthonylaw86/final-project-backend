@@ -1,5 +1,5 @@
-const express = require('express')
-const router = express.Router()
+const express = require("express");
+const router = express.Router();
 
 // const router = require("express").Router();
 const { createUser, loginUser } = require("../controllers/users");
@@ -17,7 +17,7 @@ router.use("/users", authorization, userRouter);
 
 router.use("/items", musicCardRouter);
 
-router.post("/singin", validateUserLogin, loginUser);
+router.post("/signin", validateUserLogin, loginUser);
 
 router.post("/signup", validateUserInfo, createUser);
 
