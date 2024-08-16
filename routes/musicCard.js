@@ -20,7 +20,7 @@ router.use(authorization);
 
 router.post("/", validateMusicCard, createMusicCard);
 
-router.delete("/:itemId/likes", validateItemId, deleteMusicCard);
+router.delete("/:itemId", validateItemId, deleteMusicCard);
 
 router.put("/:itemId/likes", validateItemId, likeMusicCard);
 

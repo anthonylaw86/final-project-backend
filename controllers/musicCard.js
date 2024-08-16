@@ -78,7 +78,7 @@ const likeMusicCard = (req, res, next) => {
     { $addToSet: { likes: userId } },
     { new: true }
   )
-    .ofFail()
+    .orFail()
     .then((item) => {
       res.status(200).send({ data: item });
     })
@@ -105,7 +105,7 @@ const unlikeMusicCard = (req, res, next) => {
     { $pull: { likes: userId } },
     { new: true }
   )
-    .ofFail()
+    .orFail()
     .then((item) => {
       res.status(200).send({ data: item });
     })
