@@ -48,11 +48,9 @@ const createUser = (req, res, next) => {
 // GET USER BY ID
 
 const getCurrentUser = (req, res, next) => {
-  console.log("res", res);
   User.findById(req.user._id)
     .orFail()
     .then((user) => {
-      console.log(user);
       if (!user) {
         next(new NotFoundError("User not found"));
       }
@@ -81,11 +79,9 @@ const loginUser = (req, res, next) => {
 
   return User.findUserByCredentials(username, password)
     .then((user) => {
-      console.log("user", user);
       const token = jwt.sign({ _id: user._id }, JWT_SECRET, {
         expiresIn: "30d",
       });
-      console.log("token", token);
       res.send({ token });
     })
     .catch((err) => {
