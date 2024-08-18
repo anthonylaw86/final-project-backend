@@ -2,6 +2,7 @@ require("dotenv").config();
 const express = require("express");
 const dotenv = require("dotenv");
 const fetch = require("node-fetch");
+
 const { URLSearchParams } = require("url");
 const cors = require("cors");
 const mongoose = require("mongoose");
@@ -40,7 +41,7 @@ app.use(requestLogger);
 
 // SPOTIFY
 
-global.access_token = "";
+let access_token;
 
 dotenv.config();
 
