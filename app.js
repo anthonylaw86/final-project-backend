@@ -32,7 +32,7 @@ app.use(helmet());
 
 // BASIC REQUEST LOGGING
 app.use((req, res, next) => {
-  console.log(`${req.method} ${req.url} - ${JSON.stringify(req.body)}`);
+  // console.log(`${req.method} ${req.url} - ${JSON.stringify(req.body)}`);
   next();
 });
 
@@ -40,8 +40,6 @@ app.use((req, res, next) => {
 app.use(requestLogger);
 
 // SPOTIFY
-
-let access_token;
 
 dotenv.config();
 
@@ -61,9 +59,31 @@ var generateRandomString = function (length) {
   return text;
 };
 
-app.use(cors());
+const corsOptions = {
+  origin: function (origin, callback) {
+    const allowedOrigins = [
+      "https://beatapp.strangled.net",
+      "http://localhost:3000", // your frontend running locally
+      "http://localhost:3002", // your backend running locally
+    ];
+
+    if (allowedOrigins.indexOf(origin) !== -1 || !origin) {
+      // Allow requests with no origin (like mobile apps or curl requests)
+      callback(null, true);
+    } else {
+      callback(new Error("Not allowed by CORS"));
+    }
+  },
+  methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
+  credentials: true,
+  optionsSuccessStatus: 204,
+};
+
+app.use(cors(corsOptions));
+
 app.use(express.json());
-app.options("*", cors());
+
+app.options("*", cors(corsOptions));
 
 app.get("/auth/token", (req, res) => {
   res.json({ access_token: access_token });
@@ -124,6 +144,8 @@ app.get("/auth/callback", async (req, res) => {
     // Parse the JSON response
     const data = await response.json();
     const { access_token } = data;
+
+    global.access_token = access_token;
 
     // do something with the tokens
     res.redirect(`http://localhost:3000/post-login?token=${access_token}`);
