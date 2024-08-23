@@ -63,6 +63,8 @@ const corsOptions = {
   origin: function (origin, callback) {
     const allowedOrigins = [
       "https://beatapp.strangled.net",
+      "htto://beatapp.strangled.net",
+      "http://api.beatapp.strangled.net",
       "http://localhost:3000", // your frontend running locally
       "http://localhost:3002", // your backend running locally
     ];
